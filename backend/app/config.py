@@ -33,6 +33,7 @@ class Settings(BaseSettings):
     APP_NAME: str = "AegisDevSec"
     ENVIRONMENT: Literal["development", "staging", "production"] = "development"
     DEBUG: bool = False
+    CORS_ORIGINS: list[str] = ["http://localhost:3000"]
 
     # --- Database ---
     DATABASE_URL: PostgresDsn = Field(
@@ -77,6 +78,14 @@ class Settings(BaseSettings):
     @property
     def is_production(self) -> bool:
         return self.ENVIRONMENT == "production"
+
+    def model_post_init(self, __context) -> None:
+        if self.is_production and self.JWT_SECRET_KEY.get_secret_value() == "dev-only-insecure-key":
+            raise ValueError(
+                "JWT_SECRET_KEY is still set to the insecure dev default while "
+                "ENVIRONMENT=production. Set a real, random secret in your .env "
+                "or platform's secret manager before deploying."
+            )
 
 
 @lru_cache
