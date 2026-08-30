@@ -58,6 +58,10 @@ class Settings(BaseSettings):
     JWT_ALGORITHM: str = "HS256"
     JWT_EXPIRE_MINUTES: int = 60
 
+    # --- Scanner tool settings ---
+    SCANNER_TIMEOUT_SECONDS: int = 120
+    SCAN_WORKSPACE_DIR: str = "/tmp/aegis_scans"
+
     @field_validator("DATABASE_URL")
     @classmethod
     def _require_asyncpg_driver(cls, v: PostgresDsn) -> PostgresDsn:
