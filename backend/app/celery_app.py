@@ -31,3 +31,10 @@ celery_app.conf.update(
 def ping() -> str:
     """Trivial task to verify broker/worker wiring end to end."""
     return "pong"
+
+# Import task modules so their @celery_app.task decorators actually
+# register with this Celery instance. Without this import, the worker
+# only ever discovers tasks defined directly in this file (like ping)
+# and silently ignores everything in app/tasks/, even though the code
+# exists and looks correct.
+from app.tasks import scan_tasks  # noqa: E402,F401
